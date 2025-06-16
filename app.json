@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "PathXpert",
+    "slug": "PathXpert",
+    "version": "1.0.0",
+    "scheme": "pathxpert",  
+    "owner": "gayatri_takalikar",  
+    "platforms": ["ios", "android", "web"],
+    "sdkVersion": "53.0.0",
+    "plugins": ["expo-web-browser"]
+  }
+}
