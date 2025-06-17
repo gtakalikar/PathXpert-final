@@ -10,8 +10,7 @@ const {
   sendOTP,
   verifyOTP,
   forgotPassword,
-  resetPassword,
-  googleLogin
+  resetPassword
 } = require('../controllers/authController');
 
 const { auth } = require('../middleware/auth');
@@ -22,8 +21,8 @@ router.post('/login', login);
 router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:token', resetPassword);
-router.post('/google-login', googleLogin);
+router.post('/reset-password', resetPassword);
+
 
 // ─── 🔒 PROTECTED ROUTES ─────────────────────────────────────
 router.get('/me', auth, getMe);
