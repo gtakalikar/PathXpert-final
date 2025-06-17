@@ -1,17 +1,41 @@
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // allows null for local users
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  firstName: {
+    type: String,
+    trim: true
+  },
+  lastName: {
+    type: String,
+    trim: true
+  },
+
+  // ✅ UPDATED USERNAME FIELD
   username: {
     type: String,
-    required: [true, 'Please add a name'],
     trim: true,
     unique: true,
     minlength: [3, 'Name must be at least 3 characters'],
-    maxlength: [50, 'Name cannot be more than 50 characters']
+    maxlength: [50, 'Name cannot be more than 50 characters'],
+    validate: {
+      validator: function (v) {
+        return this.authType === 'google' || (v && v.length >= 3);
+      },
+      message: 'Username is required for local accounts'
+    }
   },
+
   email: {
     type: String,
     required: [true, 'Please add an email'],
@@ -23,40 +47,54 @@ const UserSchema = new mongoose.Schema({
       'Please add a valid email'
     ]
   },
+
   password: {
     type: String,
     minlength: [6, 'Password must be at least 6 characters'],
     select: false,
-    default: null // for Google users
+    validate: {
+      validator: function (v) {
+        return this.authType === 'google' || (v && v.length >= 6);
+      },
+      message: 'Password is required for local accounts'
+    }
   },
+
   authType: {
     type: String,
     enum: ['google', 'local'],
     default: 'local'
   },
+
   role: {
     type: String,
     enum: ['user', 'admin'],
     default: 'user'
   },
+
   isActive: {
     type: Boolean,
     default: true
   },
+
   lastLogin: {
     type: Date
   },
+
   mobile: {
     type: String,
     trim: true
   },
+
   emergencyContact: {
     type: String,
     trim: true
   },
+
   sosHistory: [{
     type: Date
   }],
+
   favRoutes: [{
     from: { type: String, required: true },
     to: { type: String, required: true },
@@ -65,15 +103,25 @@ const UserSchema = new mongoose.Schema({
       default: Date.now
     }
   }],
+
   recentRoutes: [{
     type: String
   }],
+
   passwordResetToken: String,
   passwordResetExpires: Date,
+
   profilePicture: {
     type: String,
     default: 'https://example.com/default-profile.png'
   },
+
+  settings: {
+    darkMode: { type: Boolean, default: false },
+    notifications: { type: Boolean, default: true },
+    mapType: { type: String, default: 'standard' }
+  },
+
   createdAt: {
     type: Date,
     default: Date.now
@@ -85,7 +133,7 @@ const UserSchema = new mongoose.Schema({
 });
 
 // 🔐 Hash password before save (only for local auth)
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
   if (!this.isModified('password') || this.authType === 'google') {
     return next();
   }
@@ -100,13 +148,13 @@ UserSchema.pre('save', async function(next) {
 });
 
 // 🔍 Compare password
-UserSchema.methods.comparePassword = async function(candidatePassword) {
+UserSchema.methods.comparePassword = async function (candidatePassword) {
   if (!this.password) throw new Error('Password not set for this user');
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // 🔑 Generate JWT
-UserSchema.methods.generateAuthToken = function() {
+UserSchema.methods.generateAuthToken = function () {
   return jwt.sign(
     {
       id: this._id,
@@ -118,9 +166,9 @@ UserSchema.methods.generateAuthToken = function() {
   );
 };
 
-// 💎 Virtual full name (in case you add firstName + lastName later)
-UserSchema.virtual('fullName').get(function() {
-  return this.username;
+// 💎 Virtual full name using firstName + lastName
+UserSchema.virtual('fullName').get(function () {
+  return `${this.firstName || ''} ${this.lastName || ''}`.trim();
 });
 
 const User = mongoose.model('User', UserSchema);
