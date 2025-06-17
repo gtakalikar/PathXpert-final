@@ -1,0 +1,50 @@
+{
+  "name": "pathxpert",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+  "@react-native-async-storage/async-storage": "2.1.2",
+  "@react-native-community/masked-view": "0.1.11",
+  "@react-navigation/bottom-tabs": "^6.5.7",
+  "@react-navigation/native": "^6.1.6",
+  "@react-navigation/native-stack": "^6.9.12",
+  "@react-navigation/stack": "^6.4.1",
+  "axios": "^1.10.0",
+  "expo": "^53.0.11",
+  "expo-auth-session": "~6.2.0",
+  "expo-constants": "~17.1.6",
+  "expo-linear-gradient": "~14.1.5",
+  "expo-location": "~18.1.5",
+  "expo-status-bar": "~2.2.3",
+  "expo-web-browser": "~14.1.6",
+  "firebase": "^11.9.1",
+  "google-auth-library": "^10.0.0",
+  "react": "19.0.0",
+  "react-dom": "19.0.0",
+  "react-native": "0.79.3",
+  "react-native-chart-kit": "^6.12.0",
+  "react-native-gesture-handler": "~2.24.0",
+  "react-native-maps": "1.20.1",
+  "react-native-ratings": "^8.1.0",
+  "react-native-reanimated": "~3.17.4",
+  "react-native-safe-area-context": "5.4.0",
+  "react-native-screens": "~4.11.1",
+  "react-native-svg": "15.11.2",
+  "react-native-vector-icons": "^9.2.0",
+  "react-native-web": "^0.20.0"
+},
+
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "babel-plugin-module-resolver": "^5.0.2",
+    "typescript": "^5.8.3"
+  }
+}
