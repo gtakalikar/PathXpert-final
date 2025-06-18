@@ -111,7 +111,7 @@ const OtpScreen = ({ route, navigation }) => {
         placeholder="Enter OTP"
         value={otp}
         onChangeText={setOtp}
-        keyboardType="numeric"
+        keyboardType="alphanumeric"
         maxLength={6}
       />
 

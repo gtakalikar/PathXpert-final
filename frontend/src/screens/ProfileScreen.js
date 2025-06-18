@@ -11,17 +11,23 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileScreen = ({ navigation }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await fetch('http://192.168.31.167:8003/api/profile', {
+        const token = await AsyncStorage.getItem('token'); // Get actual token
+        console.log('🔥 Token:', token);
+
+        const res = await fetch('http://192.168.31.167:8003/api/profile/me', {
           headers: {
-            Authorization: 'Bearer YOUR_AUTH_TOKEN_HERE',
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
           },
         });
         const data = await res.json();
@@ -62,7 +68,12 @@ const ProfileScreen = ({ navigation }) => {
               </View>
             )}
           </View>
-          <Text style={styles.userName}>{user?.name || 'Unknown User'}</Text>
+          <Text style={styles.userName}>
+    {user?.firstName
+      ? `${user.firstName} ${user.lastName || ''}`
+      : user?.username || user?.displayName || 'Unknown User'}
+  </Text>
+          
           <Text style={styles.userEmail}>{user?.email || 'N/A'}</Text>
         </View>
 

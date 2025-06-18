@@ -89,6 +89,11 @@ const getReports = async (req, res) => {
     if (category) query.category = category;
 
     if (req.user.role !== 'admin') {
+      if (!req.user || !req.user._id) {
+    return res.status(401).json({
+      message: 'Unauthorized - user not found or token invalid'
+    });
+  }
       query.userId = req.user._id;
     }
 
