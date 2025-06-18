@@ -14,11 +14,7 @@ const otpSchema = new mongoose.Schema({
     type: String,
     required: [true, 'OTP is required']
   },
-  type: {
-    type: String,
-    enum: ['email', 'sms'],
-    required: [true, 'OTP type is required']
-  },
+ 
   createdAt: { 
     type: Date, 
     default: Date.now,

@@ -88,10 +88,13 @@ export default function App() {
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Authentication" component={AuthenticationScreen} />
+          
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="Authentication" component={AuthenticationScreen} />
           <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
+ 
+          <Stack.Screen name="OtpVerify" component={AuthenticationScreen} />
           {/* Main Tabs */}
           <Stack.Screen name="MainTabs" component={MainTabs} />
 

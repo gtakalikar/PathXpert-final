@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
-  ToastAndroid,
-  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
@@ -15,36 +13,14 @@ import { StatusBar } from 'expo-status-bar';
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
-
-  useEffect(() => {
-    const loadSavedCredentials = async () => {
-      const savedEmail = await AsyncStorage.getItem('savedEmail');
-      const savedPassword = await AsyncStorage.getItem('savedPassword');
-      const savedRememberMe = await AsyncStorage.getItem('rememberMe');
-
-      if (savedRememberMe === 'true') {
-        setEmail(savedEmail || '');
-        setPassword(savedPassword || '');
-        setRememberMe(true);
-      }
-    };
-    loadSavedCredentials();
-  }, []);
-
-  const showToast = (msg) => {
-    if (Platform.OS === 'android') {
-      ToastAndroid.show(msg, ToastAndroid.SHORT);
-    } else {
-      Alert.alert('Info', msg);
-    }
-  };
 
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
+    if (!email || !password) {
       Alert.alert('Missing Info', 'Please fill out both fields!');
       return;
     }
+
+    console.log('Sending:', { email, password });
 
     try {
       const response = await fetch('http://192.168.31.167:8003/api/auth/login', {
@@ -53,50 +29,33 @@ export default function LoginScreen({ navigation }) {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
-      console.log('Login Response:', data);
+      const text = await response.text();
+      console.log('🌐 Raw Login Response:', text);
 
-      if (response.ok && data.token) {
-        const { token, refreshToken, userData } = data;
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error('❌ Could not parse JSON:', e);
+        Alert.alert('Unexpected Response', text);
+        return;
+      }
 
-        await AsyncStorage.setItem('accessToken', token);
-        if (refreshToken) await AsyncStorage.setItem('refreshToken', refreshToken);
-        if (userData) {
-          await AsyncStorage.setItem('userDetails', JSON.stringify(userData));
-          if (userData.id) await AsyncStorage.setItem('userId', userData.id);
-        }
+      if (response.ok && data.success) {
+        // Store token and maybe user ID
+        await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
-        if (rememberMe) {
-          await AsyncStorage.setItem('savedEmail', email);
-          await AsyncStorage.setItem('savedPassword', password);
-          await AsyncStorage.setItem('rememberMe', 'true');
-        } else {
-          await AsyncStorage.removeItem('savedEmail');
-          await AsyncStorage.removeItem('savedPassword');
-          await AsyncStorage.setItem('rememberMe', 'false');
-        }
-
-        showToast('Login successful 💙');
+        console.log('🔐 Token saved:', data.token);
+        Alert.alert('Login Success 💙', `Welcome, ${data.user.name || 'User'}!`);
         navigation.replace('MainTabs');
       } else {
         Alert.alert('Login Failed ❌', data.message || 'Invalid credentials');
       }
     } catch (error) {
-      console.error('Login Error:', error.message);
+      console.error('Login Error:', error);
       Alert.alert('Error', 'Something went wrong. Try again later.');
     }
-  };
-
-  const handleForgotPassword = () => {
-    if (!email.trim()) {
-      Alert.alert('Missing Email', 'Please enter your email first!');
-      return;
-    }
-
-    navigation.navigate('Authentication', {
-      email,
-      purpose: 'reset-password',
-    });
   };
 
   return (
@@ -122,13 +81,7 @@ export default function LoginScreen({ navigation }) {
         secureTextEntry
       />
 
-      <TouchableOpacity onPress={() => setRememberMe(!rememberMe)}>
-        <Text style={styles.rememberMeText}>
-          {rememberMe ? '☑' : '☐'} Remember Me
-        </Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={handleForgotPassword}>
+      <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
         <Text style={styles.forgotText}>Forgot Password?</Text>
       </TouchableOpacity>
 
@@ -145,6 +98,7 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
+// 🔮 Styles remain unchanged
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -179,12 +133,6 @@ const styles = StyleSheet.create({
     color: '#3A7AFE',
     fontWeight: '500',
     marginBottom: 20,
-  },
-  rememberMeText: {
-    color: '#333',
-    fontSize: 14,
-    textAlign: 'left',
-    marginBottom: 10,
   },
   loginButton: {
     backgroundColor: '#3A7AFE',

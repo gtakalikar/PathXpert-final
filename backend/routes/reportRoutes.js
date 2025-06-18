@@ -17,7 +17,7 @@ router.get('/report-options', getReportOptions);
 
 // Other routes
 router.post('/', auth, createReport); // Use createReport directly, no `reportController.` prefix
-router.get('/', getReports);
+router.get('/', auth, getReports);
 router.get('/:id', getReportById);
 router.put('/:id', updateReport);
 router.delete('/:id', deleteReport);
