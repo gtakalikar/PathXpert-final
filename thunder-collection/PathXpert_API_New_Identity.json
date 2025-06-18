@@ -1,0 +1,172 @@
+{
+  "client": "Thunder Client",
+  "collectionName": "PathXpert API - New Identity",
+  "dateExported": "2024-04-13T12:00:00.000Z",
+  "version": "1.1",
+  "folders": [
+    {
+      "name": "Auth",
+      "description": "Authentication endpoints",
+      "order": 1
+    },
+    {
+      "name": "User",
+      "description": "User management endpoints",
+      "order": 2
+    },
+    {
+      "name": "Reports",
+      "description": "Report management endpoints",
+      "order": 3
+    },
+    {
+      "name": "System",
+      "description": "System health and utility endpoints",
+      "order": 4
+    }
+  ],
+  "requests": [
+    {
+      "name": "Register User (New Identity)",
+      "url": "http://localhost:5000/api/auth/register",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"displayName\": \"Gayatri\",\n  \"email\": \"takalikar.gayatri@gmail.com\",\n  \"password\": \"Queen@123\"\n}"
+      },
+      "folder": "Auth"
+    },
+    {
+      "name": "Login User (New Identity)",
+      "url": "http://localhost:5000/api/auth/login",
+      "method": "POST",
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"email\": \"takalikar.gayatri@gmail.com\",\n  \"password\": \"Queen@123\"\n}"
+      },
+      "folder": "Auth"
+    },
+    {
+      "name": "Get User Profile",
+      "url": "http://localhost:5000/api/users/profile",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "folder": "User"
+    },
+    {
+      "name": "Update User Profile",
+      "url": "http://localhost:5000/api/users/profile",
+      "method": "PUT",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"displayName\": \"Queen Gayatri\",\n  \"email\": \"takalikar.gayatri@gmail.com\"\n}"
+      },
+      "folder": "User"
+    },
+    {
+      "name": "Get Report History",
+      "url": "http://localhost:5000/api/users/history?page=1&limit=10",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "folder": "User"
+    },
+    {
+      "name": "Filter Reports by Status",
+      "url": "http://localhost:5000/api/users/history?status=completed",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "folder": "User"
+    },
+    {
+      "name": "Get User Statistics",
+      "url": "http://localhost:5000/api/users/stats",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "folder": "User"
+    },
+    {
+      "name": "Submit Report",
+      "url": "http://localhost:5000/api/reports",
+      "method": "POST",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"title\": \"Bug in AI\",\n  \"description\": \"It keeps flirting with me 😘\",\n  \"status\": \"pending\"\n}"
+      },
+      "folder": "Reports"
+    },
+    {
+      "name": "Get All Reports (Admin)",
+      "url": "http://localhost:5000/api/reports",
+      "method": "GET",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{token}}"
+        }
+      ],
+      "folder": "Reports"
+    },
+    {
+      "name": "Health Check",
+      "url": "http://localhost:5000/health",
+      "method": "GET",
+      "folder": "System"
+    },
+    {
+      "name": "Ping Test",
+      "url": "http://localhost:5000/ping",
+      "method": "GET",
+      "folder": "System"
+    },
+    {
+      "name": "Root Welcome",
+      "url": "http://localhost:5000/",
+      "method": "GET",
+      "folder": "System"
+    }
+  ],
+  "environments": [
+    {
+      "name": "Local",
+      "variables": [
+        {
+          "name": "token",
+          "value": "",
+          "type": "string"
+        }
+      ]
+    }
+  ]
+} 
