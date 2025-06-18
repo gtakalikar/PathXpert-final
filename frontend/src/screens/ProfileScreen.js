@@ -22,7 +22,7 @@ const ProfileScreen = ({ navigation }) => {
     const fetchProfile = async () => {
       try {
         const token = await AsyncStorage.getItem('token'); // Get actual token
-        console.log('🔥 Token:', token);
+        console.log(' Token:', token);
 
         const res = await fetch('http://192.168.31.167:8003/api/profile/me', {
           headers: {

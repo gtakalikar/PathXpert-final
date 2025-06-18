@@ -50,7 +50,7 @@ const ForgotPasswordScreen = () => {
       console.log('[Send OTP]', response.data);
 
       if (response.data.status === 'success') {
-        showToast('OTP sent to email 💌');
+        showToast('OTP sent to email ');
         navigation.navigate('OtpVerify', {
           email,
           purpose: 'reset',

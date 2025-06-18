@@ -30,13 +30,13 @@ export default function LoginScreen({ navigation }) {
       });
 
       const text = await response.text();
-      console.log('🌐 Raw Login Response:', text);
+      console.log(' Raw Login Response:', text);
 
       let data;
       try {
         data = JSON.parse(text);
       } catch (e) {
-        console.error('❌ Could not parse JSON:', e);
+        console.error(' Could not parse JSON:', e);
         Alert.alert('Unexpected Response', text);
         return;
       }
@@ -46,11 +46,11 @@ export default function LoginScreen({ navigation }) {
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
-        console.log('🔐 Token saved:', data.token);
-        Alert.alert('Login Success 💙', `Welcome, ${data.user.name || 'User'}!`);
+        console.log('Token saved:', data.token);
+        Alert.alert('Login Success ', `Welcome, ${data.user.name || 'User'}!`);
         navigation.replace('MainTabs');
       } else {
-        Alert.alert('Login Failed ❌', data.message || 'Invalid credentials');
+        Alert.alert('Login Failed ', data.message || 'Invalid credentials');
       }
     } catch (error) {
       console.error('Login Error:', error);

@@ -85,7 +85,7 @@ const OtpScreen = ({ route, navigation }) => {
           throw new Error(registerData.message || 'Registration failed');
         }
 
-        Alert.alert('Success 🎉', 'Account created successfully!');
+        Alert.alert('Success ', 'Account created successfully!');
         navigation.replace('Login');
       } else if (purpose === 'reset') {
         Alert.alert('Verified', 'OTP verified. Set new password.');
@@ -93,7 +93,7 @@ const OtpScreen = ({ route, navigation }) => {
       }
     } catch (error) {
       console.error('Verify Error:', error.message);
-      Alert.alert('Error ❌', error.message);
+      Alert.alert('Error ', error.message);
     } finally {
       setIsLoading(false);
     }

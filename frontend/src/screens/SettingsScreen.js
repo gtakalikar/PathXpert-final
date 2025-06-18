@@ -27,7 +27,7 @@ const SettingsScreen = ({ navigation }) => {
     const fetchSettings = async () => {
       try {
          const token = await AsyncStorage.getItem('token');
-      if (!token) throw new Error('No token found 🥲');
+      if (!token) throw new Error('No token found ');
        
     const response = await fetch('http://192.168.31.167:8003/api/users/settings', {
       method: 'GET',
@@ -44,7 +44,7 @@ const SettingsScreen = ({ navigation }) => {
         
       } catch (err) {
          console.error('Settings fetch error:', err);
-        Alert.alert('Error', 'Failed to load settings 🥲');
+        Alert.alert('Error', 'Failed to load settings ');
       }finally {
         setLoading(false);
          }
@@ -64,7 +64,7 @@ const SettingsScreen = ({ navigation }) => {
             body: JSON.stringify({ darkMode, notifications, mapType }),
           });
         } catch (err) {
-          console.log('💥 Error updating settings', err);
+          console.log(' Error updating settings', err);
         }
       };
 

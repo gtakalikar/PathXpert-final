@@ -31,7 +31,7 @@ export default function RegisterScreen({ navigation }) {
       try {
         data = JSON.parse(text);
       } catch (e) {
-        console.error('💥 JSON Parse Error:', e);
+        console.error(' JSON Parse Error:', e);
         Alert.alert('Oops!', 'Invalid response format');
         return;
       }
@@ -42,10 +42,10 @@ export default function RegisterScreen({ navigation }) {
       if (response.ok) {
         if (data.token) {
           await AsyncStorage.setItem('token', data.token);
-          Alert.alert('🎉 Registered', `Welcome ${data.user.username || 'User'}!`);
+          Alert.alert(' Registered', `Welcome ${data.user.username || 'User'}!`);
           navigation.replace('MainTabs');
         } else {
-          console.warn('⚠️ Token is missing in response');
+          console.warn('Token is missing in response');
           Alert.alert('Warning', 'No token received. Try logging in instead.');
         }
       } else {
