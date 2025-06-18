@@ -15,18 +15,15 @@ const {
 
 const { auth } = require('../middleware/auth');
 
-// ─── 🟢 PUBLIC ROUTES ──────────────────────────────────────────
+// ─── 🔒 PROTECTED ROUTES ─────────────────────────────────────
+router.get('/me', auth, getMe);
+router.post('/logout', auth, logout);
 router.post('/register', register);
 router.post('/login', login);
 router.post('/send-otp', sendOTP);
 router.post('/verify-otp', verifyOTP);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
-
-
-// ─── 🔒 PROTECTED ROUTES ─────────────────────────────────────
-router.get('/me', auth, getMe);
-router.post('/logout', auth, logout);
 
 // ─── EXPORT ───────────────────────────────────────────────
 module.exports = router;

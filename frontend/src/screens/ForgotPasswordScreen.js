@@ -44,7 +44,7 @@ const ForgotPasswordScreen = () => {
       setLoading(true);
       const response = await axios.post('http://192.168.31.167:8003/api/auth/send-otp', {
         email,
-        purpose: 'reset',
+        purpose: 'forgot-password',
       });
 
       console.log('[Send OTP]', response.data);

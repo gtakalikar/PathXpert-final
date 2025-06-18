@@ -21,10 +21,24 @@ if (JWT_SECRET === 'yourSecretKey') {
 
 
 exports.register = async (req, res) => {
-  const { firstName, lastName, username, email, password } = req.body;
+  let email = req.body.email?.trim().toLowerCase();
+const { firstName, lastName, username, password } = req.body;
+
+  
 
   try {
-    const user = await User.create({
+    
+    // 💣 Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'User already registered with this email ',
+      });
+    }
+
+    // 💖 Create and save new user
+    const newUser = new User({
       firstName,
       lastName,
       username,
@@ -33,31 +47,46 @@ exports.register = async (req, res) => {
       authType: 'local',
     });
 
-    // ✨ Debug: Check if method exists
-    if (!user.generateAuthToken) {
-      console.log('❌ generateAuthToken method is undefined!');
+    await newUser.save(); // 👑 Saved to MongoDB
+    console.log('✅ User saved:', newUser);
+
+    // 🔑 Generate JWT
+    if (!newUser.generateAuthToken) {
+      console.error('❌ generateAuthToken is undefined!');
+      return res.status(500).json({
+        status: 'error',
+        message: 'Auth token generation failed.',
+      });
     }
 
-    // ✨ Generate token
-    const token = user.generateAuthToken(); // ⛔ Might be undefined
-    console.log('🛡️ Token inside controller:', token); // 👀 Track it!
+    const token = newUser.generateAuthToken();
+    console.log('🛡️ Token:', token);
 
+    // 📩 Respond with success
     res.status(201).json({
       status: 'success',
-      message: 'User registered successfully.',
-      token, // Make sure it's included here
+      message: 'User registered successfully 🎉',
+      token,
       user: {
-        id: user._id,
-        email: user.email,
-        username: user.username,
+        id: newUser._id,
+        email: newUser.email,
+        username: newUser.username,
+        fullName: newUser.fullName, // Optional: virtual field
       },
     });
   } catch (err) {
+    // 🧨 Handle unique constraint errors
+    if (err.code === 11000) {
+      return res.status(400).json({
+        status: 'fail',
+        message: `Duplicate field: ${Object.keys(err.keyValue).join(', ')} already in use.`,
+      });
+    }
+
     console.error('❌ Register Error:', err);
-    res.status(500).json({ status: 'error', message: 'Server error' });
+    res.status(500).json({ status: 'error', message: 'Server error, babe 😔' });
   }
 };
-
 
 // ─────────────────────────────────────────────
 // 🔐 Login
@@ -159,11 +188,17 @@ exports.verifyOTP = async (req, res) => {
       return res.status(400).json({ status: 'fail', message: 'Email and OTP are required.' });
     }
 
+   
+    const sanitizedOtp = otp.trim().toLowerCase();
     const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+     console.log('[🔍 Email]', email);
+    console.log('[🔍 OTP]', otp);
+    console.log('[🔍 Sanitized OTP]', sanitizedOtp);
+    console.log('[🔍 Hashed OTP]', hashedOtp);
     const existingOtp = await Otp.findOne({
       email,
-      otp: hashedOtp,
-      expiresAt: { $gt: Date.now() },
+      
+
     });
 
     if (!existingOtp) {
@@ -177,41 +212,9 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
-// ─────────────────────────────────────────────
-// 🔁 Forgot Password
-// ─────────────────────────────────────────────
+// Inside authController.js
 exports.forgotPassword = async (req, res) => {
-  try {
-    const { email } = req.body;
-    if (!email) {
-      return res.status(400).json({ status: 'fail', message: 'Email is required.' });
-    }
-
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ status: 'fail', message: 'User not found.' });
-    }
-
-    const otp = secureOTP();
-    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
-
-    await Otp.findOneAndDelete({ email });
-
-    await new Otp({
-      email,
-      otp: hashedOtp,
-      purpose: 'forgot-password',
-      createdAt: new Date(),
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
-    }).save();
-
-    await sendOTPEmail(email, otp);
-
-    res.status(200).json({ status: 'success', message: 'OTP sent to email for password reset.' });
-  } catch (error) {
-    console.error('[Forgot Password Error]', error);
-    res.status(500).json({ status: 'error', message: 'Failed to send forgot password OTP', error: error.message });
-  }
+  res.status(501).json({ message: 'Not implemented yet.' });
 };
 
 // ─────────────────────────────────────────────
@@ -241,7 +244,8 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({ status: 'fail', message: 'User not found.' });
     }
 
-    user.password = await bcrypt.hash(password, 12);
+   
+    user.password = password;
     await user.save();
 
     await Otp.deleteMany({ email });

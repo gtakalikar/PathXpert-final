@@ -28,6 +28,7 @@ import NextBestActionScreen from './src/screens/NextBestActionScreen';
 import TrafficHeatmapScreen from './src/screens/TrafficHeatmapScreen';
 import TrafficPredictionScreen from './src/screens/TrafficPredictionScreen';
 import FeedbackScreen from './src/screens/FeedbackScreen';
+import OtpVerify from './src/screens/OtpVerify'; // update the path if needed
 import AdminAnalyticsScreen from './src/screens/AdminAnalyticsScreen';
 
 // 💡 Deep Linking config
@@ -88,8 +89,10 @@ export default function App() {
           <Stack.Screen name="Splash" component={SplashScreen} />
           <Stack.Screen name="Register" component={RegisterScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Authentication" component={AuthenticationScreen} />
+          
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen name="Authentication" component={AuthenticationScreen} />
+          <Stack.Screen name="OtpVerify" component={OtpVerify} />
           <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
           {/* Main Tabs */}
