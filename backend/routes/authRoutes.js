@@ -19,6 +19,14 @@ const {
 const { auth } = require('../middleware/auth');
 
 // ─── 🟢 PUBLIC ROUTES ──────────────────────────────────────────
+  resetPassword
+} = require('../controllers/authController');
+
+const { auth } = require('../middleware/auth');
+
+// ─── 🔒 PROTECTED ROUTES ─────────────────────────────────────
+router.get('/me', auth, getMe);
+router.post('/logout', auth, logout);
 router.post('/register', register);
 router.post('/login', login);
 router.post('/send-otp', sendOTP);

@@ -51,6 +51,11 @@ export default function LoginScreen({ navigation }) {
         navigation.replace('MainTabs');
       } else {
         Alert.alert('Login Failed ', data.message || 'Invalid credentials');
+        console.log(' Token saved:', data.token);
+        Alert.alert('Login Success ', `Welcome, ${data.user.name || 'User'}!`);
+        navigation.replace('MainTabs');
+      } else {
+        Alert.alert('Login Failed ❌', data.message || 'Invalid credentials');
       }
     } catch (error) {
       console.error('Login Error:', error);

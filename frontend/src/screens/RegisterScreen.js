@@ -46,6 +46,7 @@ export default function RegisterScreen({ navigation }) {
           navigation.replace('MainTabs');
         } else {
           console.warn('Token is missing in response');
+          console.warn(' Token is missing in response');
           Alert.alert('Warning', 'No token received. Try logging in instead.');
         }
       } else {

@@ -29,6 +29,14 @@ try {
   console.warn('⚠️ Firebase auth not configured - some auth routes may not work');
 }
 
+
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', (req, res, next) => {
+  console.log(`🔐 Auth route accessed: ${req.method} ${req.originalUrl}`);
+  next();
+}, authRoutes);
+
+
 // 🛡 Helmet with CSP
 app.use(
   helmet({

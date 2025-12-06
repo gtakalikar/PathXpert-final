@@ -28,6 +28,9 @@ const ProfileScreen = ({ navigation }) => {
           headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
+        const res = await fetch('http://192.168.31.167:8003/api/profile', {
+          headers: {
+            Authorization: 'Bearer YOUR_AUTH_TOKEN_HERE',
           },
         });
         const data = await res.json();
@@ -74,6 +77,7 @@ const ProfileScreen = ({ navigation }) => {
       : user?.username || user?.displayName || 'Unknown User'}
   </Text>
           
+          <Text style={styles.userName}>{user?.name || 'Unknown User'}</Text>
           <Text style={styles.userEmail}>{user?.email || 'N/A'}</Text>
         </View>
 

@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
+const USER_ID = 'yourUserIdHere'; // Replace with actual user id from auth/login
+
 const SettingsScreen = ({ navigation }) => {
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
@@ -48,6 +50,17 @@ const SettingsScreen = ({ navigation }) => {
       }finally {
         setLoading(false);
          }
+       
+        const response = await fetch(`http://192.168.31.167:8003/api/settings/${USER_ID}`);
+
+        const data = await response.json();
+        setDarkMode(data.settings.darkMode);
+        setNotifications(data.settings.notifications);
+        setMapType(data.settings.mapType || 'standard');
+        setLoading(false);
+      } catch (err) {
+        Alert.alert('Error', 'Failed to load settings 🥲');
+      }
     };
 
     fetchSettings();
@@ -65,6 +78,7 @@ const SettingsScreen = ({ navigation }) => {
           });
         } catch (err) {
           console.log(' Error updating settings', err);
+          console.log('💥 Error updating settings', err);
         }
       };
 
@@ -85,6 +99,22 @@ const SettingsScreen = ({ navigation }) => {
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
        
+        {/* Appearance */}
+        <View style={styles.settingsSection}>
+          <Text style={styles.settingsSectionTitle}>APPEARANCE</Text>
+          <View style={styles.settingItem}>
+            <View style={styles.settingIconContainer}>
+              <Ionicons name="moon" size={24} color="#00C897" />
+            </View>
+            <Text style={styles.settingLabel}>Dark Mode</Text>
+            <Switch
+              value={darkMode}
+              onValueChange={setDarkMode}
+              trackColor={{ false: '#ccc', true: '#00C89780' }}
+              thumbColor={darkMode ? '#00C897' : '#f4f3f4'}
+            />
+          </View>
+        </View>
 
         {/* Preferences */}
         <View style={styles.settingsSection}>

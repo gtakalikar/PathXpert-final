@@ -54,6 +54,7 @@ const HomeScreen = ({ navigation }) => {
         }
       } catch (error) {
         console.error('Backend error :', error);
+        console.error('Backend error 😵:', error);
         setTrafficInfo(null);
       }
     })();

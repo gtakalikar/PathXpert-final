@@ -1,3 +1,5 @@
+
+
 // screens/OtpScreen.js
 import React, { useEffect, useState } from 'react';
 import {
@@ -13,6 +15,7 @@ import { StatusBar } from 'expo-status-bar';
 
 const OtpScreen = ({ route, navigation }) => {
   const { email, purpose, name, password, phone } = route.params;
+  const { email, purpose } = route.params;
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(60);
@@ -38,6 +41,7 @@ const OtpScreen = ({ route, navigation }) => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, purpose }), // ✅ include purpose
       });
 
       const data = await response.json();
@@ -61,6 +65,7 @@ const OtpScreen = ({ route, navigation }) => {
     setIsLoading(true);
 
     try {
+       console.log('[Verify OTP] Email:', email, 'OTP:', otp); // 🔍 Debug line
       const verifyResponse = await fetch('http://192.168.31.167:8003/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -94,6 +99,13 @@ const OtpScreen = ({ route, navigation }) => {
     } catch (error) {
       console.error('Verify Error:', error.message);
       Alert.alert('Error ', error.message);
+      // ✅ Only for reset purpose
+      Alert.alert('Verified', 'OTP verified. Set new password.');
+      navigation.replace('ResetPassword', { email });
+
+    } catch (error) {
+      console.error('Verify Error:', error.message);
+      Alert.alert('Error ❌', error.message);
     } finally {
       setIsLoading(false);
     }
@@ -112,6 +124,7 @@ const OtpScreen = ({ route, navigation }) => {
         value={otp}
         onChangeText={setOtp}
         keyboardType="alphanumeric"
+        keyboardType="default" // ✅ allows alphanumeric
         maxLength={6}
       />
 

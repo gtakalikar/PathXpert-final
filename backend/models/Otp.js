@@ -19,6 +19,16 @@ const otpSchema = new mongoose.Schema({
     type: Date, 
     default: Date.now,
     expires: 300 // 5 minutes expiry
+  type: {
+    type: String,
+    enum: ['email', 'sms'],
+    default: 'email' // 👈 now it assumes 'email' if you don’t provide it
+  },
+  createdAt: { 
+    type: Date, 
+    default: () => new Date(Date.now() + 5 * 60 * 1000) // THIS is what you check during verify!
+    
+    
   }
 }, {
   timestamps: true
