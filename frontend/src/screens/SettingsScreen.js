@@ -12,6 +12,9 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
+
+
 
 const USER_ID = 'yourUserIdHere'; // Replace with actual user id from auth/login
 
@@ -25,6 +28,28 @@ const SettingsScreen = ({ navigation }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
+         const token = await AsyncStorage.getItem('token');
+      if (!token) throw new Error('No token found ');
+       
+    const response = await fetch('http://192.168.31.167:8003/api/users/settings', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    if (!response.ok) throw new Error('Server response not OK');
+    const data = await response.json();
+        setDarkMode(data.darkMode);
+        setNotifications(data.notifications);
+        setMapType(data.mapType || 'standard');
+        
+      } catch (err) {
+         console.error('Settings fetch error:', err);
+        Alert.alert('Error', 'Failed to load settings ');
+      }finally {
+        setLoading(false);
+         }
        
         const response = await fetch(`http://192.168.31.167:8003/api/settings/${USER_ID}`);
 
@@ -52,6 +77,7 @@ const SettingsScreen = ({ navigation }) => {
             body: JSON.stringify({ darkMode, notifications, mapType }),
           });
         } catch (err) {
+          console.log(' Error updating settings', err);
           console.log('💥 Error updating settings', err);
         }
       };
@@ -72,6 +98,7 @@ const SettingsScreen = ({ navigation }) => {
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
+       
         {/* Appearance */}
         <View style={styles.settingsSection}>
           <Text style={styles.settingsSectionTitle}>APPEARANCE</Text>

@@ -46,6 +46,11 @@ export default function LoginScreen({ navigation }) {
         await AsyncStorage.setItem('token', data.token);
         await AsyncStorage.setItem('user', JSON.stringify(data.user));
 
+        console.log('Token saved:', data.token);
+        Alert.alert('Login Success ', `Welcome, ${data.user.name || 'User'}!`);
+        navigation.replace('MainTabs');
+      } else {
+        Alert.alert('Login Failed ', data.message || 'Invalid credentials');
         console.log(' Token saved:', data.token);
         Alert.alert('Login Success ', `Welcome, ${data.user.name || 'User'}!`);
         navigation.replace('MainTabs');

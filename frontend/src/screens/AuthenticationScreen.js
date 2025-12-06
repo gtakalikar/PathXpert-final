@@ -14,6 +14,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 
 const OtpScreen = ({ route, navigation }) => {
+  const { email, purpose, name, password, phone } = route.params;
   const { email, purpose } = route.params;
   const [otp, setOtp] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +40,7 @@ const OtpScreen = ({ route, navigation }) => {
       const response = await fetch('http://192.168.31.167:8003/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
         body: JSON.stringify({ email, purpose }), // ✅ include purpose
       });
 
@@ -76,6 +78,27 @@ const OtpScreen = ({ route, navigation }) => {
         throw new Error(verifyData.message || 'OTP verification failed');
       }
 
+      if (purpose === 'registration') {
+        const registerResponse = await fetch('http://192.168.31.167:8003/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: name, email, password, phone }),
+        });
+
+        const registerData = await registerResponse.json();
+        if (!registerResponse.ok || !registerData.success) {
+          throw new Error(registerData.message || 'Registration failed');
+        }
+
+        Alert.alert('Success ', 'Account created successfully!');
+        navigation.replace('Login');
+      } else if (purpose === 'reset') {
+        Alert.alert('Verified', 'OTP verified. Set new password.');
+        navigation.replace('ResetPassword', { email });
+      }
+    } catch (error) {
+      console.error('Verify Error:', error.message);
+      Alert.alert('Error ', error.message);
       // ✅ Only for reset purpose
       Alert.alert('Verified', 'OTP verified. Set new password.');
       navigation.replace('ResetPassword', { email });
@@ -100,6 +123,7 @@ const OtpScreen = ({ route, navigation }) => {
         placeholder="Enter OTP"
         value={otp}
         onChangeText={setOtp}
+        keyboardType="alphanumeric"
         keyboardType="default" // ✅ allows alphanumeric
         maxLength={6}
       />

@@ -21,6 +21,13 @@ const profileRoutes = require('./routes/profileRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 
 // Try importing authRoutes
+let authRoutes;
+try {
+  authRoutes = require('./routes/authRoutes');
+} catch (err) {
+  console.error('❌ Error loading authRoutes:', err);
+  console.warn('⚠️ Firebase auth not configured - some auth routes may not work');
+}
 
 
 const authRoutes = require('./routes/authRoutes');

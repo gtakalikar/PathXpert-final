@@ -14,6 +14,11 @@ const otpSchema = new mongoose.Schema({
     type: String,
     required: [true, 'OTP is required']
   },
+ 
+  createdAt: { 
+    type: Date, 
+    default: Date.now,
+    expires: 300 // 5 minutes expiry
   type: {
     type: String,
     enum: ['email', 'sms'],

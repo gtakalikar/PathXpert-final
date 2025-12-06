@@ -53,6 +53,7 @@ const HomeScreen = ({ navigation }) => {
           setTrafficInfo(data);
         }
       } catch (error) {
+        console.error('Backend error :', error);
         console.error('Backend error 😵:', error);
         setTrafficInfo(null);
       }

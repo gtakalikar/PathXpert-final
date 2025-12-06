@@ -167,6 +167,12 @@ exports.sendOTP = async (req, res) => {
       purpose,
       createdAt: new Date(),
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
+    console.log('📅 OTP expires at:', optvalue); // Debugging: Log the expiration time
+    await optvalue.save();
+    console.log('🔑 OTP generated:', otp); // Debugging: Log the OTP
+    await sendOTPEmail(email ,otp);
+    
     }).save();
 
     await sendOTPEmail(email, otp);
@@ -183,10 +189,20 @@ exports.sendOTP = async (req, res) => {
 // ─────────────────────────────────────────────
 exports.verifyOTP = async (req, res) => {
   try {
+    console.log('🔍 Verifying OTP for email:', req.body.email);
     const { email, otp } = req.body;
     if (!email || !otp) {
       return res.status(400).json({ status: 'fail', message: 'Email and OTP are required.' });
     }
+    console.log('🔑 Received OTP:', otp); // Debugging: Log the received OTP
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+    const existingOtp = await Otp.findOne({
+      email,
+      otp: hashedOtp,
+      expiresAt: { $gt: Date.now() },
+    });
+    console.log('🔒 Hashed OTP for verification:', hashedOtp); // Debugging: Log the hashed OTP
+    console.log('🔍 Existing OTP found:', existingOtp); // Debugging: Log the existing OTP
 
    
     const sanitizedOtp = otp.trim().toLowerCase();
@@ -212,6 +228,41 @@ exports.verifyOTP = async (req, res) => {
   }
 };
 
+// ─────────────────────────────────────────────
+// 🔁 Forgot Password
+// ─────────────────────────────────────────────
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return res.status(400).json({ status: 'fail', message: 'Email is required.' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ status: 'fail', message: 'User not found.' });
+    }
+
+    const otp = secureOTP();
+    const hashedOtp = crypto.createHash('sha256').update(otp).digest('hex');
+
+    await Otp.findOneAndDelete({ email });
+
+    await new Otp({
+      email,
+      otp: hashedOtp,
+      purpose: 'forgot-password',
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    }).save();
+
+    await sendOTPEmail(email, otp);
+
+    res.status(200).json({ status: 'success', message: 'OTP sent to email for password reset.' });
+  } catch (error) {
+    console.error('[Forgot Password Error]', error);
+    res.status(500).json({ status: 'error', message: 'Failed to send forgot password OTP', error: error.message });
+  }
 // Inside authController.js
 exports.forgotPassword = async (req, res) => {
   res.status(501).json({ message: 'Not implemented yet.' });
@@ -244,6 +295,7 @@ exports.resetPassword = async (req, res) => {
       return res.status(404).json({ status: 'fail', message: 'User not found.' });
     }
 
+    user.password = await bcrypt.hash(password, 12);
    
     user.password = password;
     await user.save();

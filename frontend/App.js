@@ -92,6 +92,10 @@ export default function App() {
           
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="Authentication" component={AuthenticationScreen} />
+          <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+
+ 
+          <Stack.Screen name="OtpVerify" component={AuthenticationScreen} />
           <Stack.Screen name="OtpVerify" component={OtpVerify} />
           <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 

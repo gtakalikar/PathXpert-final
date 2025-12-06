@@ -45,6 +45,7 @@ export default function RegisterScreen({ navigation }) {
           Alert.alert(' Registered', `Welcome ${data.user.username || 'User'}!`);
           navigation.replace('MainTabs');
         } else {
+          console.warn('Token is missing in response');
           console.warn(' Token is missing in response');
           Alert.alert('Warning', 'No token received. Try logging in instead.');
         }
